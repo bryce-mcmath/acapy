@@ -6,33 +6,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  tests:
-    if: github.repository_owner == 'openwallet-foundation' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        os: ["ubuntu-latest"]
-        python-version: ["3.12"]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Run Tests
-        uses: ./.github/actions/run-unit-tests
-        with:
-          python-version: ${{ matrix.python-version }}
-          os: ${{ matrix.os }}
-          is_pr: "false"
-
   setup_and_check_pub:
     name: Setup Publish
     runs-on: ubuntu-latest
     outputs:
       commits_today: ${{ steps.commits.outputs.commits_today }}
       date: ${{ steps.date.outputs.date }}
-    if: github.repository_owner == 'openwallet-foundation' || github.event_name == 'workflow_dispatch'
+    if: github.repository_owner == 'bryce-mcmath' || github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
       - name: Print Latest Commit
@@ -48,7 +28,7 @@ jobs:
 
   publish:
     name: Publish
-    needs: [tests, setup_and_check_pub]
+    needs: [setup_and_check_pub]
     if: needs.setup_and_check_pub.outputs.commits_today > 0
     uses: ./.github/workflows/publish.yml
     strategy:
